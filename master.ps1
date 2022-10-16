@@ -1,4 +1,4 @@
-﻿echo '============================================================'
+echo '============================================================'
 echo 'Instalación desatendida de drivers y programas de Windows.'
 echo 'Script v0.6 basado en PowerShell, por Rob.'
 echo '============================================================'
@@ -40,7 +40,7 @@ $INF_Intel = Get-Content $DRIVE\DRIVERS\Intel\Video_6+\Graphics_Gen9_Gen11\iigd_
 for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
     if ($INF_Intel -match $GPU_Intel[$i]) {
         echo "Tarjeta de video Intel Graphics encontrada. Instalando controlador..." $GPU_Intel[$i]
-        Start-Process -Wait $DRIVE\DRIVERS\Intel\Video_6+\Installer.exe -ArgumentList "-p"
+        #Start-Process -Wait $DRIVE\DRIVERS\Intel\Video_6+\Installer.exe -ArgumentList "-p"
     }
 }
 
@@ -71,5 +71,24 @@ for ($i=0; $i -le $GPU_NVIDIA.Count-1; $i++) {
         #Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\setup.exe -ArgumentList "-install"
     }
 }
+
+echo '********************************** Instalando Office...'
+#Start-Process -Wait $DRIVE\OFFICE_2013\setup.exe
+echo 'Instalación completada.'
+
+echo '********************************** Pre-activando Windows...'
+#Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Activators\HWID-KMS38_Activation\KMS38_Activation.cmd -ArgumentList "/u"
+#Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Activators\HWID-KMS38_Activation\HWID_Activation.cmd -ArgumentList "/u"
+
+echo '********************************** Pre-activando Office...'
+#Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Activators\Online_KMS_Activation\Activate.cmd -ArgumentList "/u"
+#Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Activators\Online_KMS_Activation\Renewal_Setup.cmd -ArgumentList "/rat"
+
+echo '********************************** Estableciendo fondo de pantalla...'
+Set-ItemProperty -path 'HKCU:\Control Panel\Desktop\' -name WallPaper -value $HOME\Pictures\BackgroundXtreme$RND.jpg
+for ($i=0; $i -le 10; $i++) {
+    rundll32.exe user32.dll,UpdatePerUserSystemParameters ,1 ,True
+}
+echo 'Hecho.'
 
 #pause
