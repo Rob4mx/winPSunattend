@@ -77,12 +77,13 @@ Start-Process -Wait $DRIVE\OFFICE_2013\setup.exe
 echo 'Instalación completada.'
 
 echo '********************************** Pre-activando Windows...'
-Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Activators\HWID-KMS38_Activation\KMS38_Activation.cmd -ArgumentList "/u"
-Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Activators\HWID-KMS38_Activation\HWID_Activation.cmd -ArgumentList "/u"
+# Agradecimiento al paquete de scripts del usuario "massgravel" de GitHub (https://github.com/massgravel/Microsoft-Activation-Scripts)
+Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\HWID-KMS38_Activation\KMS38_Activation.cmd -ArgumentList "/a"
+Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\HWID-KMS38_Activation\HWID_Activation.cmd -ArgumentList "/a"
 
 echo '********************************** Pre-activando Office...'
-Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Activators\Online_KMS_Activation\Activate.cmd -ArgumentList "/u"
-Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Activators\Online_KMS_Activation\Renewal_Setup.cmd -ArgumentList "/rat"
+# Agradecimiento al paquete MAS v1.6 del usuario "massgravel" de GitHub (https://github.com/massgravel/Microsoft-Activation-Scripts)
+Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Online_KMS_Activation\Activate.cmd -ArgumentList "/a"
 Start-Process taskschd
 
 echo '********************************** Estableciendo fondo de pantalla...'
