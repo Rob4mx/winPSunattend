@@ -93,6 +93,12 @@ for ($i=0; $i -le 10; $i++) {
 }
 echo 'Hecho.'
 
+echo '*********************************** Instalando controlador genérico de Audio que no depende de internet.'
+# https://github.com/pal1000/Realtek-UAD-generic/releases/tag/6.0.9414.1
+Start-Process -Wait $DRIVE\DRIVERS\Realtek\Unofficial-Realtek-UAD-generic-6.0.9414.1\Realtek-UAD-generic\setup.cmd
+Start-Process -Wait $DRIVE\DRIVERS\Realtek\RealtekAudioControl_1.39.279-offline\RTKUWP\setup.cmd
+echo 'Hecho.'
+
 Start-Process taskmgr
 Start-Process devmgmt
 
