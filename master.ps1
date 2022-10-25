@@ -1,5 +1,5 @@
 echo '============================================================'
-echo 'Instalación desatendida de drivers y programas de Windows.'
+echo 'Instalacion desatendida de drivers y programas de Windows.'
 echo 'Script v0.6 basado en PowerShell, por Rob.'
 echo '============================================================'
 
@@ -10,7 +10,7 @@ $DRIVE = $PSScriptRoot.Substring(0,2)
 $MOBO = wmic baseboard get manufacturer,product
 $MOBO = $MOBO[2]
 
-# Código principal
+# Codigo principal
 echo '************************ Copiando fondo de pantalla.'
 copy $DRIVE\FONDO_XT\BackgroundXtreme$RND.jpg $HOME\Pictures
 
@@ -18,19 +18,22 @@ echo '************************ Tarjeta madre:'
 echo $MOBO
 
 if ($CHIPSET -eq 'GenuineIntel') {
+# https://www.intel.com/content/www/us/en/download/19347/chipset-inf-utility.html?
     echo 'Detectado Chipset Intel. Instalando controladores...'
     Start-Process -Wait $DRIVE\DRIVERS\Intel\Chipset\setup.exe -ArgumentList "-s -norestart"
-    echo 'Instalación completada.'
+    echo 'Instalacion completada.'
 }
 if ($CHIPSET -eq 'AuthenticAMD'){
+# https://www.amd.com/es/support/kb/release-notes/rn-ryzen-chipset-3-10-08-506
     echo 'Detectado Chipset AMD. Instalando controladores...'
     Start-Process -Wait $DRIVE\DRIVERS\AMD\Chipset\setup.exe -ArgumentList "-install"
-    echo 'Instalación completada.'
+    echo 'Instalacion completada.'
 }
 
 echo '************************* Tarjeta de video:'
 # Para Intel se usa el archivo "DRIVERS\Intel\Video_6+\Graphics_Gen9_Gen11\iigd_dch.inf" para cotejar con el
 # hardware instalado y decidir el driver a instalar.
+# https://www.intel.la/content/www/xl/es/download/19344/intel-graphics-windows-dch-drivers.html
 $GPU_Intel = pnputil /enum-devices /deviceid "PCI\VEN_8086"
 $GPU_Intel = $GPU_Intel -like "*PCI\*"
 $GPU_Intel = $GPU_Intel.Substring(37,17)
@@ -45,11 +48,12 @@ for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
 }
 
 # Para AMD se usa el archivo "DRIVERS\AMD\Radeon\Packages\Drivers\Display\WT6A_INF\U0380677.inf".
+# https://www.amd.com/en/support/kb/release-notes/rn-rad-win-22-10-2
 $GPU_AMD = pnputil /enum-devices /deviceid "PCI\VEN_1002"
 $GPU_AMD = $GPU_AMD -like "*PCI\*"
 $GPU_AMD = $GPU_AMD.Substring(37,17)
 
-$INF_AMD = Get-Content $DRIVE\DRIVERS\AMD\Radeon\Packages\Drivers\Display\WT6A_INF\U0380677.inf
+$INF_AMD = Get-Content $DRIVE\DRIVERS\AMD\Radeon\Packages\Drivers\Display\WT6A_INF\U0384626.inf
 
 for ($i=0; $i -le $GPU_AMD.Count-1; $i++) {
     if ($INF_AMD -match $GPU_AMD[$i]) {
@@ -74,7 +78,7 @@ for ($i=0; $i -le $GPU_NVIDIA.Count-1; $i++) {
 
 echo '********************************** Instalando Office...'
 Start-Process -Wait $DRIVE\OFFICE_2013\setup.exe
-echo 'Instalación completada.'
+echo 'Instalacion completada.'
 
 echo '********************************** Pre-activando Windows...'
 # Agradecimiento al paquete de scripts del usuario "massgravel" de GitHub (https://github.com/massgravel/Microsoft-Activation-Scripts)
@@ -91,12 +95,6 @@ Set-ItemProperty -path 'HKCU:\Control Panel\Desktop\' -name WallPaper -value $HO
 for ($i=0; $i -le 10; $i++) {
     rundll32.exe user32.dll,UpdatePerUserSystemParameters ,1 ,True
 }
-echo 'Hecho.'
-
-echo '*********************************** Instalando controlador genérico de Audio que no depende de internet.'
-# https://github.com/pal1000/Realtek-UAD-generic/releases/tag/6.0.9414.1
-Start-Process -Wait $DRIVE\DRIVERS\Realtek\Unofficial-Realtek-UAD-generic-6.0.9414.1\Realtek-UAD-generic\setup.cmd
-Start-Process -Wait $DRIVE\DRIVERS\Realtek\RealtekAudioControl_1.39.279-offline\RTKUWP\setup.cmd
 echo 'Hecho.'
 
 Start-Process taskmgr
