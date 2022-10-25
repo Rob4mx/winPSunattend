@@ -1,3 +1,4 @@
+Start-Transcript -path $HOME\Desktop\log.txt -append
 echo '============================================================'
 echo '== Instalacion desatendida de drivers y programas de Windows.'
 echo '== Script v0.6 basado en PowerShell, por Rob.'
@@ -108,6 +109,14 @@ for ($i=0; $i -le $GPU_NVIDIA.Count-1; $i++) {
     }
 }
 
+echo '********************************** Instalando controladores de audio compatibles...'
+try {
+    #Start-Process -Wait $DRIVE\DRIVERS\Realtek\HD825E\Setup.exe -ArgumentList "/s" -ErrorAction Stop
+    echo 'Instalacion completada.'
+} catch {
+    echo '¡Verificar archivos de instalacion en la carpeta DRIVERS\Realtek\HD825E!'
+}
+
 echo '********************************** Instalando Office...'
 try {
     Start-Process -Wait $DRIVE\OFFICE_2013\setup.exe -ErrorAction Stop
@@ -134,8 +143,5 @@ for ($i=0; $i -le 10; $i++) {
     rundll32.exe user32.dll,UpdatePerUserSystemParameters ,1 ,True
 }
 echo 'Hecho.'
-
-Start-Process taskmgr
-Start-Process devmgmt
-
-pause
+Stop-Transcript
+Restart-Computer
