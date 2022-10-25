@@ -55,15 +55,14 @@ echo '************************* Tarjeta de video:'
 # Para Intel se usa el archivo "DRIVERS\Intel\Video_6+\Graphics_Gen9_Gen11\iigd_dch.inf" para cotejar con el
 # hardware instalado y decidir el driver a instalar.
 # https://www.intel.la/content/www/xl/es/download/19344/intel-graphics-windows-dch-drivers.html
-$GPU_Intel = pnputil /enum-devices /deviceid "PCI\VEN_8086"
-$GPU_Intel = $GPU_Intel -like "*PCI\*"
+$INF_Intel = Get-Content $DRIVE\DRIVERS\Intel\Video_6+\Graphics_Gen9_Gen11\iigd_dch.inf
+$GPU_Intel = pnputil /enum-devices /connected
+$GPU_Intel = $GPU_Intel -like "*PCI\VEN_8086*"
 try {
     $GPU_Intel = $GPU_Intel.Substring(37,17)
 } catch {
     echo 'No se encontraron graficos Intel en este equipo.'
 }
-
-$INF_Intel = Get-Content $DRIVE\DRIVERS\Intel\Video_6+\Graphics_Gen9_Gen11\iigd_dch.inf
 
 for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
     if ($INF_Intel -match $GPU_Intel[$i]) {
@@ -72,17 +71,16 @@ for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
     }
 }
 
-# Para AMD se usa el archivo "DRIVERS\AMD\Radeon\Packages\Drivers\Display\WT6A_INF\U0380677.inf".
+# Para AMD se usa el archivo "DRIVERS\AMD\Radeon\Packages\Drivers\Display\WT6A_INF\U0384626.inf".
 # https://www.amd.com/en/support/kb/release-notes/rn-rad-win-22-10-2
-$GPU_AMD = pnputil /enum-devices /deviceid "PCI\VEN_1002"
-$GPU_AMD = $GPU_AMD -like "*PCI\*"
+$INF_AMD = Get-Content $DRIVE\DRIVERS\AMD\Radeon\Packages\Drivers\Display\WT6A_INF\U0384626.inf
+$GPU_AMD = pnputil /enum-devices /connected
+$GPU_AMD = $GPU_AMD -like "*PCI\VEN_1002*"
 try {
     $GPU_AMD = $GPU_AMD.Substring(37,17)
 } catch {
     echo 'No se encontraron graficos AMD en este equipo.'
 }
-
-$INF_AMD = Get-Content $DRIVE\DRIVERS\AMD\Radeon\Packages\Drivers\Display\WT6A_INF\U0384626.inf
 
 for ($i=0; $i -le $GPU_AMD.Count-1; $i++) {
     if ($INF_AMD -match $GPU_AMD[$i]) {
@@ -92,26 +90,25 @@ for ($i=0; $i -le $GPU_AMD.Count-1; $i++) {
 }
 
 # Para NVIDIA se usa el archivo "DRIVERS\NVIDIA\ListDevices.txt" generado con NVCleanstall.
-$GPU_NVIDIA = pnputil /enum-devices /deviceid "PCI\VEN_10DE"
-$GPU_NVIDIA = $GPU_NVIDIA -like "*PCI\*"
+$INF_NVIDIA = Get-Content $DRIVE\DRIVERS\NVIDIA\ListDevices.txt
+$GPU_NVIDIA = pnputil /enum-devices /class Display
+$GPU_NVIDIA = $GPU_NVIDIA -like "*PCI\VEN_10DE*"
 try {
     $GPU_NVIDIA = $GPU_NVIDIA.Substring(37,17)
 } catch {
     echo 'No se encontraron graficos NVIDIA en este equipo.'
 }
 
-$INF_NVIDIA = Get-Content $DRIVE\DRIVERS\NVIDIA\ListDevices.txt
-
 for ($i=0; $i -le $GPU_NVIDIA.Count-1; $i++) {
     if ($INF_NVIDIA -match $GPU_NVIDIA[$i]) {
         echo "Tarjeta de video NVIDIA GeForce encontrada. Instalando controlador..." $GPU_NVIDIA[$i]
-        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\setup.exe -ArgumentList "-install"
+        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\setup.exe -ArgumentList "-s"
     }
 }
 
 echo '********************************** Instalando controladores de audio compatibles...'
 try {
-    #Start-Process -Wait $DRIVE\DRIVERS\Realtek\HD825E\Setup.exe -ArgumentList "/s" -ErrorAction Stop
+    Start-Process -Wait $DRIVE\DRIVERS\Realtek\HD825E\Setup.exe -ArgumentList "/s" -ErrorAction Stop
     echo 'Instalacion completada.'
 } catch {
     echo '¡Verificar archivos de instalacion en la carpeta DRIVERS\Realtek\HD825E!'
