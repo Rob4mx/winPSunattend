@@ -138,4 +138,4 @@ echo 'Hecho.'
 Start-Process taskmgr
 Start-Process devmgmt
 
-#pause
+pause
