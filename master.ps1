@@ -1,4 +1,4 @@
-Start-Transcript -path $HOME\Desktop\log.txt -append
+Start-Transcript -path $HOME\Desktop\reporte.txt -append
 
 Write-Host @"
 
@@ -7,10 +7,10 @@ Write-Host @"
       ,"                      ,"|        ,"        ,"  |
      +-----------------------+  |      ,"        ,"    |
      |   -----------------.  |  |     +---------+      |
-     |  |                 |  |  |     | -==----'|      |               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     |  |  No te veo      |  |  |     |         |      |               % Instalacion desatendida de drivers y programas. %
-     |  |  :(             |  |  |/----|'---=    |      |               % Script v0.6 basado en PowerShell, de Rob.       %
-     |  |  <3             |  |  |   ,/|==== ooo |      ;               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     |  |                 |  |  |     | -==----'|      |          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     |  |  No te veo      |  |  |     |         |      |          % Instalacion desatendida de drivers y programas. %
+     |  |  :(             |  |  |/----|'---=    |      |          % Script v0.6 basado en PowerShell, de Rob.       %
+     |  |  <3             |  |  |   ,/|==== ooo |      ;          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      |  |                 |  |  |  // |(((( [33]|    ,"
      |  '-----------------'  |," .;'| |((((     |  ,"
      +-----------------------+  ;;  | |         |,"     -Kevin Lam-
@@ -99,6 +99,7 @@ for ($i=0; $i -le $GPU_AMD.Count-1; $i++) {
     if ($INF_AMD -match $GPU_AMD[$i]) {
         Write-Host "AMD Radeon encontrado. Instalando controlador..." $GPU_AMD
         Start-Process -Wait $DRIVE\DRIVERS\AMD\Radeon\setup.exe -ArgumentList "-install"
+        Start-Process -Wait $DRIVE\DRIVERS\AMD\Radeon-Legacy\setup.exe -ArgumentList "-install"
     }
 }
 
@@ -140,8 +141,8 @@ Write-Host ''
 Write-Host '---------- Pre-activando Windows... ----------'
 # Agradecimiento al paquete "MAS v1.6" del usuario "massgravel" de GitHub (https://github.com/massgravel/Microsoft-Activation-Scripts)
 try {
-    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\HWID-KMS38_Activation\KMS38_Activation.cmd -ArgumentList "/a" -ErrorAction Stop
-    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\HWID-KMS38_Activation\HWID_Activation.cmd -ArgumentList "/a" -ErrorAction Stop
+    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\HWID-KMS38_Activation\KMS38_Activation.cmd -ArgumentList "/a"
+    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\HWID-KMS38_Activation\HWID_Activation.cmd -ArgumentList "/a"
     Write-Host 'Listo'
 } catch {
     Write-Host 'ERROR: Verificar archivos de instalacion de la carpeta ACTIVADOR' -BackgroundColor 'Red'
@@ -151,7 +152,8 @@ Write-Host ''
 Write-Host '---------- Pre-activando Office... ----------'
 # Agradecimiento al paquete "MAS v1.6" del usuario "massgravel" de GitHub (https://github.com/massgravel/Microsoft-Activation-Scripts)
 try {
-    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Online_KMS_Activation\Activate.cmd -ArgumentList "/a" -ErrorAction Stop
+    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Online_KMS_Activation\Activate.cmd -ArgumentList "/wo"
+    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Online_KMS_Activation\Activate.cmd -ArgumentList "/rat"
     Write-Host 'Listo'
 } catch {
     Write-Host 'ERROR: Verificar archivos de instalacion de la carpeta ACTIVADOR' -BackgroundColor 'Red'
@@ -174,6 +176,12 @@ try {
 } catch {
     Write-Host 'ERROR: Verificar archivos de instalacion de CystalDiskInfo en la carpeta HERRAMIENTAS\CrystalDiskInfo' -BackgroundColor 'Red'
 }
+
+Write-Host '---------- Cambiando nombre de red... ----------'
+$RND = Get-Random -Maximum 9999
+Rename-Computer -NewName "User$RND-PC"
+Write-Host 'Listo'
+Write-Host ''
 
 Stop-Transcript
 Restart-Computer
