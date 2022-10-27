@@ -56,7 +56,7 @@ echo '************************* Tarjeta de video:'
 # hardware instalado y decidir el driver a instalar.
 # https://www.intel.la/content/www/xl/es/download/19344/intel-graphics-windows-dch-drivers.html
 $INF_Intel = Get-Content $DRIVE\DRIVERS\Intel\Video_6+\Graphics_Gen9_Gen11\iigd_dch.inf
-$GPU_Intel = pnputil /enum-devices /connected
+$GPU_Intel = pnputil /enum-devices /class Display
 $GPU_Intel = $GPU_Intel -like "*PCI\VEN_8086*"
 try {
     $GPU_Intel = $GPU_Intel.Substring(37,17)
@@ -66,15 +66,15 @@ try {
 
 for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
     if ($INF_Intel -match $GPU_Intel[$i]) {
-        echo "Tarjeta de video Intel Graphics encontrada. Instalando controlador..." $GPU_Intel[$i]
-        Start-Process -Wait $DRIVE\DRIVERS\Intel\Video_6+\Installer.exe -ArgumentList "-p"
+        echo "Tarjeta de video Intel Graphics encontrada. Instalando controlador..."
+        Start-Process -Wait $DRIVE\DRIVERS\Intel\Video_6+\Installer.exe -ArgumentList "-s"
     }
 }
 
 # Para AMD se usa el archivo "DRIVERS\AMD\Radeon\Packages\Drivers\Display\WT6A_INF\U0384626.inf".
 # https://www.amd.com/en/support/kb/release-notes/rn-rad-win-22-10-2
 $INF_AMD = Get-Content $DRIVE\DRIVERS\AMD\Radeon\Packages\Drivers\Display\WT6A_INF\U0384626.inf
-$GPU_AMD = pnputil /enum-devices /connected
+$GPU_AMD = pnputil /enum-devices /class Display
 $GPU_AMD = $GPU_AMD -like "*PCI\VEN_1002*"
 try {
     $GPU_AMD = $GPU_AMD.Substring(37,17)
@@ -84,7 +84,7 @@ try {
 
 for ($i=0; $i -le $GPU_AMD.Count-1; $i++) {
     if ($INF_AMD -match $GPU_AMD[$i]) {
-        echo "Tarjeta de video AMD Radeon encontrada. Instalando controlador..." $GPU_AMD[$i]
+        echo "Tarjeta de video AMD Radeon encontrada. Instalando controlador..."
         Start-Process -Wait $DRIVE\DRIVERS\AMD\Radeon\setup.exe -ArgumentList "-install"
     }
 }
@@ -101,7 +101,7 @@ try {
 
 for ($i=0; $i -le $GPU_NVIDIA.Count-1; $i++) {
     if ($INF_NVIDIA -match $GPU_NVIDIA[$i]) {
-        echo "Tarjeta de video NVIDIA GeForce encontrada. Instalando controlador..." $GPU_NVIDIA[$i]
+        echo "Tarjeta de video NVIDIA GeForce encontrada. Instalando controlador..."
         Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\setup.exe -ArgumentList "-s"
     }
 }
@@ -140,5 +140,14 @@ for ($i=0; $i -le 10; $i++) {
     rundll32.exe user32.dll,UpdatePerUserSystemParameters ,1 ,True
 }
 echo 'Hecho.'
+echo '********************************** Ejecutando CrystalDiskInfo...'
+try {
+    Start-Process -Wait $DRIVE\HERRAMIENTAS\CrystalDiskInfo\DiskInfo64.exe -ArgumentList "/CopyExit"
+    Move-Item $DRIVE\HERRAMIENTAS\CrystalDiskInfo\DiskInfo.txt $HOME\Desktop
+    echo 'Creado archivo de reporte en el escritorio.'
+} catch {
+    echo '¡Verificar archivos de instalacion de CystalDiskInfo en la carpeta HERRAMIENTAS\CrystalDiskInfo!'
+}
+
 Stop-Transcript
 Restart-Computer
