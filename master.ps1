@@ -15,11 +15,11 @@ Write-Host @"
      |  '-----------------'  |," .;'| |((((     |  ,"
      +-----------------------+  ;;  | |         |,"     -Kevin Lam-
         /_)______________(_/  //'   | +---------+
-   ___________________________/___  `,
+   ___________________________/___  ',
   /  oooooooooooooooo  .o.  oooo /,   \,"-----------
- / ==ooooooooooooooo==.o.  ooo= //   ,`\--{)B     ,"
+ / ==ooooooooooooooo==.o.  ooo= //   ,'\--{)B     ,"
 /_==__==========__==_ooo__ooo=_/'   /___________,"
-`-----------------------------'
+'-----------------------------'
 
 "@
 
@@ -80,7 +80,7 @@ try {
 }
 for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
     if ($INF_Intel -match $GPU_Intel[$i]) {
-        Write-Host "Intel Graphics encontrado. Instalando controlador..."
+        Write-Host "Intel Graphics encontrado. Instalando controlador..." $GPU_Intel
         Start-Process -Wait $DRIVE\DRIVERS\Intel\Video_6+\Installer.exe -ArgumentList "-s"
     }
 }
@@ -97,12 +97,12 @@ try {
 }
 for ($i=0; $i -le $GPU_AMD.Count-1; $i++) {
     if ($INF_AMD -match $GPU_AMD[$i]) {
-        Write-Host "AMD Radeon encontrado. Instalando controlador..."
+        Write-Host "AMD Radeon encontrado. Instalando controlador..." $GPU_AMD
         Start-Process -Wait $DRIVE\DRIVERS\AMD\Radeon\setup.exe -ArgumentList "-install"
     }
 }
 
-# Para NVIDIA se usa el archivo "DRIVERS\NVIDIA\ListDevices.txt" generado con NVCleanstall.
+# Para NVIDIA se usa el archivo "DRIVERS\NVIDIA\ListDevices.txt" generado con NVCleanstall y utilizando el driver version 522.25
 $INF_NVIDIA = Get-Content $DRIVE\DRIVERS\NVIDIA\ListDevices.txt
 $GPU_NVIDIA = pnputil /enum-devices /class Display
 $GPU_NVIDIA = $GPU_NVIDIA -like "*PCI\VEN_10DE*"
@@ -113,7 +113,7 @@ try {
 }
 for ($i=0; $i -le $GPU_NVIDIA.Count-1; $i++) {
     if ($INF_NVIDIA -match $GPU_NVIDIA[$i]) {
-        Write-Host "NVIDIA GeForce encontrado. Instalando controlador..."
+        Write-Host "NVIDIA GeForce encontrado. Instalando controlador..." $GPU_NVIDIA
         Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\setup.exe -ArgumentList "-s"
     }
 }
@@ -121,10 +121,10 @@ Write-Host ''
 
 Write-Host '---------- Instalando controladores de audio compatibles... ----------'
 try {
-    Start-Process -Wait $DRIVE\DRIVERS\Realtek\HD825E\Setup.exe -ArgumentList "/s" -ErrorAction Stop
+    Start-Process -Wait $DRIVE\DRIVERS\Realtek\DM-034\Setup.exe -ArgumentList "/s" -ErrorAction Stop
     Write-Host 'Listo'
 } catch {
-    Write-Host 'ERROR: Verificar archivos de instalacion en la carpeta DRIVERS\Realtek\HD825E' -BackgroundColor 'Red'
+    Write-Host 'ERROR: Verificar archivos de instalacion en la carpeta DRIVERS\Realtek\DM-034' -BackgroundColor 'Red'
 }
 Write-Host ''
 
@@ -140,8 +140,8 @@ Write-Host ''
 Write-Host '---------- Pre-activando Windows... ----------'
 # Agradecimiento al paquete "MAS v1.6" del usuario "massgravel" de GitHub (https://github.com/massgravel/Microsoft-Activation-Scripts)
 try {
-    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\HWID-KMS38_Activation\KMS38_Activation.cmd -ArgumentList "/a"
-    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\HWID-KMS38_Activation\HWID_Activation.cmd -ArgumentList "/a"
+    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\HWID-KMS38_Activation\KMS38_Activation.cmd -ArgumentList "/a" -ErrorAction Stop
+    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\HWID-KMS38_Activation\HWID_Activation.cmd -ArgumentList "/a" -ErrorAction Stop
     Write-Host 'Listo'
 } catch {
     Write-Host 'ERROR: Verificar archivos de instalacion de la carpeta ACTIVADOR' -BackgroundColor 'Red'
@@ -151,7 +151,7 @@ Write-Host ''
 Write-Host '---------- Pre-activando Office... ----------'
 # Agradecimiento al paquete "MAS v1.6" del usuario "massgravel" de GitHub (https://github.com/massgravel/Microsoft-Activation-Scripts)
 try {
-    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Online_KMS_Activation\Activate.cmd -ArgumentList "/a"
+    Start-Process -Wait $DRIVE\ACTIVADOR\Separate-Files-Version\Online_KMS_Activation\Activate.cmd -ArgumentList "/a" -ErrorAction Stop
     Write-Host 'Listo'
 } catch {
     Write-Host 'ERROR: Verificar archivos de instalacion de la carpeta ACTIVADOR' -BackgroundColor 'Red'
