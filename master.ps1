@@ -68,9 +68,9 @@ if ($CHIPSET -eq 'AuthenticAMD'){
 Write-Host ''
 
 Write-Host '---------- Tarjeta de video ----------'
-# Para Intel se usa el archivo "DRIVERS\Intel\Video_6+\Graphics_Gen9_Gen11\iigd_dch.inf" para cotejar con el hardware instalado y decidir el driver a instalar.
+# Para Intel se usa el archivo "iigd_dch.inf" para cotejar con el hardware instalado y decidir el driver a instalar.
 # https://www.intel.la/content/www/xl/es/download/19344/intel-graphics-windows-dch-drivers.html
-$INF_Intel = Get-Content $DRIVE\DRIVERS\Intel\Video_6+\Graphics_Gen9_Gen11\iigd_dch.inf
+$INF_Intel = Get-Content $DRIVE\DRIVERS\Intel\Video_6+\iigd_dch.inf
 $GPU_Intel = pnputil /enum-devices /class Display
 $GPU_Intel = $GPU_Intel -like "*PCI\VEN_8086*"
 try {
@@ -81,13 +81,13 @@ try {
 for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
     if ($INF_Intel -match $GPU_Intel[$i]) {
         Write-Host "Intel Graphics encontrado. Instalando controlador..." $GPU_Intel
-        Start-Process -Wait $DRIVE\DRIVERS\Intel\Video_6+\Installer.exe -ArgumentList "-s"
+        Start-Process -Wait $DRIVE\DRIVERS\Intel\Video_6+\setup.exe -ArgumentList "-s"
     }
 }
 
-# Para AMD se usa el archivo "DRIVERS\AMD\Radeon\Packages\Drivers\Display\WT6A_INF\U0384626.inf".
+# Para AMD se usa el archivo "U0384626.inf" extraido del paquete de controladores.
 # https://www.amd.com/en/support/kb/release-notes/rn-rad-win-22-10-2
-$INF_AMD = Get-Content $DRIVE\DRIVERS\AMD\Radeon\Packages\Drivers\Display\WT6A_INF\U0384626.inf
+$INF_AMD = Get-Content $DRIVE\DRIVERS\AMD\Radeon\U0384626.inf
 $GPU_AMD = pnputil /enum-devices /class Display
 $GPU_AMD = $GPU_AMD -like "*PCI\VEN_1002*"
 try {
@@ -122,7 +122,7 @@ Write-Host ''
 
 Write-Host '---------- Instalando controladores de audio compatibles... ----------'
 try {
-    Start-Process -Wait $DRIVE\DRIVERS\Realtek\DM-034\Setup.exe -ArgumentList "/s" -ErrorAction Stop
+    Start-Process -Wait $DRIVE\DRIVERS\Realtek\DM-034\HD825E.exe -ErrorAction Stop
     Write-Host 'Listo'
 } catch {
     Write-Host 'ERROR: Verificar archivos de instalacion en la carpeta DRIVERS\Realtek\DM-034' -BackgroundColor 'Red'
