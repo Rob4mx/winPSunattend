@@ -9,7 +9,7 @@ Write-Host @"
      |   -----------------.  |  |     +---------+      |
      |  |                 |  |  |     | -==----'|      |          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      |  |  No te veo      |  |  |     |         |      |          % Instalacion desatendida de drivers y programas. %
-     |  |  :(             |  |  |/----|'---=    |      |          % Script v0.6 basado en PowerShell, de Rob.       %
+     |  |  :(             |  |  |/----|'---=    |      |          % Script v0.61 basado en PowerShell, de Rob.      %
      |  |  <3             |  |  |   ,/|==== ooo |      ;          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      |  |                 |  |  |  // |(((( [33]|    ,"
      |  '-----------------'  |," .;'| |((((     |  ,"
@@ -84,20 +84,25 @@ for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
     }
 }
 
-# Para AMD se usa el archivo "U0384626.inf".
+# Para AMD se usa el archivo "U0384626.inf" con los dispositivos "Legacy" removidos.
+# En caso de dispositivos Legacy, se ocupa el archivo "U0368456.inf".
 # https://www.amd.com/en/support/kb/release-notes/rn-rad-win-22-10-2
-$INF_AMD = Get-Content $DRIVE\DRIVERS\AMD\Radeon\U0384626.inf
+$INF_AMD = Get-Content $DRIVE\Radeon\U0384626.inf
+$INF_AMD_Legacy = Get-Content $DRIVE\Radeon-Legacy\U0368456.inf
 $GPU_AMD = pnputil /enum-devices /class Display
 $GPU_AMD = $GPU_AMD -like "*PCI\VEN_1002*"
 try {
     $GPU_AMD = $GPU_AMD.Substring(37,17)
 } catch {
 }
-for ($i=0; $i -le $GPU_AMD.Count-1; $i++) {
-    if ($INF_AMD -match $GPU_AMD[$i]) {
-        Write-Host "AMD Radeon encontrado. Instalando controlador..." $GPU_AMD
-        Start-Process -Wait $DRIVE\DRIVERS\AMD\Radeon\setup.exe -ArgumentList "-install"
-    }
+if ($INF_AMD -match $GPU_AMD) {
+    Write-Host "AMD Radeon encontrado. Instalando controlador..." $GPU_AMD
+    Start-Process -Wait $DRIVE\DRIVERS\AMD\Radeon\setup.exe -ArgumentList "-install"
+}
+if ($INF_AMD_Legacy -match $GPU_AMD) {
+    Write-Host "AMD Radeon Legacy encontrado. Instalando controlador..." $GPU_AMD
+    Start-Process -Wait $DRIVE\DRIVERS\AMD\Radeon-Legacy\setup.exe -ArgumentList '-y -o"C:\AMD\Graphics"'
+    Start-Process -Wait C:\AMD\Graphics\Setup.exe -ArgumentList "-install"
 }
 
 # Para NVIDIA se usa el archivo "DRIVERS\NVIDIA\ListDevices.txt" generado con NVCleanstall y utilizando el driver version 522.25
