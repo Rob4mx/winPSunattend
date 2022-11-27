@@ -76,7 +76,6 @@ $GPU_Intel = $GPU_Intel -like "*PCI\VEN_8086*"
 try {
     $GPU_Intel = $GPU_Intel.Substring(37,17)
 } catch {
-    Write-Host 'No se encontraron graficos Intel en este equipo.'
 }
 for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
     if ($INF_Intel -match $GPU_Intel[$i]) {
@@ -85,7 +84,7 @@ for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
     }
 }
 
-# Para AMD se usa el archivo "U0384626.inf" extraido del paquete de controladores.
+# Para AMD se usa el archivo "U0384626.inf".
 # https://www.amd.com/en/support/kb/release-notes/rn-rad-win-22-10-2
 $INF_AMD = Get-Content $DRIVE\DRIVERS\AMD\Radeon\U0384626.inf
 $GPU_AMD = pnputil /enum-devices /class Display
@@ -93,13 +92,11 @@ $GPU_AMD = $GPU_AMD -like "*PCI\VEN_1002*"
 try {
     $GPU_AMD = $GPU_AMD.Substring(37,17)
 } catch {
-    Write-Host 'No se encontraron graficos AMD en este equipo.'
 }
 for ($i=0; $i -le $GPU_AMD.Count-1; $i++) {
     if ($INF_AMD -match $GPU_AMD[$i]) {
         Write-Host "AMD Radeon encontrado. Instalando controlador..." $GPU_AMD
         Start-Process -Wait $DRIVE\DRIVERS\AMD\Radeon\setup.exe -ArgumentList "-install"
-        Start-Process -Wait $DRIVE\DRIVERS\AMD\Radeon-Legacy\setup.exe -ArgumentList "-install"
     }
 }
 
@@ -110,19 +107,18 @@ $GPU_NVIDIA = $GPU_NVIDIA -like "*PCI\VEN_10DE*"
 try {
     $GPU_NVIDIA = $GPU_NVIDIA.Substring(37,17)
 } catch {
-    Write-Host 'No se encontraron graficos NVIDIA en este equipo.'
 }
 for ($i=0; $i -le $GPU_NVIDIA.Count-1; $i++) {
     if ($INF_NVIDIA -match $GPU_NVIDIA[$i]) {
         Write-Host "NVIDIA GeForce encontrado. Instalando controlador..." $GPU_NVIDIA
-        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\setup.exe -ArgumentList "-s"
+        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\setup.exe -ArgumentList "/s /noreboot"
     }
 }
 Write-Host ''
 
 Write-Host '---------- Instalando controladores de audio compatibles... ----------'
 try {
-    Start-Process -Wait $DRIVE\DRIVERS\Realtek\DM-034\HD825E.exe -ErrorAction Stop
+    Start-Process -Wait $DRIVE\DRIVERS\Realtek\DM-034\HD825E.exe -ArgumentList "/s" -ErrorAction Stop
     Write-Host 'Listo'
 } catch {
     Write-Host 'ERROR: Verificar archivos de instalacion en la carpeta DRIVERS\Realtek\DM-034' -BackgroundColor 'Red'
@@ -172,12 +168,17 @@ Write-Host '---------- Ejecutando CrystalDiskInfo... ----------'
 try {
     Start-Process -Wait $DRIVE\HERRAMIENTAS\CrystalDiskInfo\DiskInfo64.exe -ArgumentList "/CopyExit"
     Move-Item $DRIVE\HERRAMIENTAS\CrystalDiskInfo\DiskInfo.txt $HOME\Desktop
+    $Crystal = Get-Content $HOME\Desktop\DiskInfo.txt
+    $Crystal = $Crystal -match "Health Status :"
+    $Crystal | Out-File $HOME\Desktop\Crystal.txt
+    Remove-Item $HOME\Desktop\DiskInfo.txt
     Write-Host 'Creado archivo de reporte en el escritorio.'
 } catch {
     Write-Host 'ERROR: Verificar archivos de instalacion de CystalDiskInfo en la carpeta HERRAMIENTAS\CrystalDiskInfo' -BackgroundColor 'Red'
 }
+Write-Host ''
 
-Write-Host '---------- Cambiando nombre de red... ----------'
+Write-Host '---------- Cambiando de nombre en red... ----------'
 $RND = Get-Random -Maximum 9999
 Rename-Computer -NewName "User$RND-PC"
 Write-Host 'Listo'
