@@ -1,26 +1,10 @@
 Start-Transcript -path $HOME\Desktop\reporte.txt -append
 
 Write-Host @"
-
-             ,----------------,              ,---------,
-        ,-----------------------,          ,"        ,"|
-      ,"                      ,"|        ,"        ,"  |
-     +-----------------------+  |      ,"        ,"    |
-     |   -----------------.  |  |     +---------+      |
-     |  |                 |  |  |     | -==----'|      |          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     |  |  No te veo      |  |  |     |         |      |          % Instalacion desatendida de drivers y programas. %
-     |  |  :(             |  |  |/----|'---=    |      |          % Script v0.61 basado en PowerShell, de Rob.      %
-     |  |  <3             |  |  |   ,/|==== ooo |      ;          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     |  |                 |  |  |  // |(((( [33]|    ,"
-     |  '-----------------'  |," .;'| |((((     |  ,"
-     +-----------------------+  ;;  | |         |,"     -Kevin Lam-
-        /_)______________(_/  //'   | +---------+
-   ___________________________/___  ',
-  /  oooooooooooooooo  .o.  oooo /,   \,"-----------
- / ==ooooooooooooooo==.o.  ooo= //   ,'\--{)B     ,"
-/_==__==========__==_ooo__ooo=_/'   /___________,"
-'-----------------------------'
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Instalacion desatendida de drivers y programas. %
+% Script v0.65 basado en PowerShell, de Rob.      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 "@
 
 # Variables de trabajo
@@ -84,11 +68,10 @@ for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
     }
 }
 
-# Para AMD se usa el archivo "U0384626.inf" con los dispositivos "Legacy" removidos.
-# En caso de dispositivos Legacy, se ocupa el archivo "U0368456.inf".
-# https://www.amd.com/en/support/kb/release-notes/rn-rad-win-22-10-2
-$INF_AMD = Get-Content $DRIVE\Radeon\U0384626.inf
-$INF_AMD_Legacy = Get-Content $DRIVE\Radeon-Legacy\U0368456.inf
+# Para AMD se usa una lista generada con el script "generador_lista_hardware_radeon.ps1" utilizando el archivo INF del paquete de controladores de pantalla.
+# Debe generarse un archivo tanto para el paquete Estándar como para el paquete Legacy
+$INF_AMD = Get-Content $DRIVE\DRIVERS\Radeon\Hardware_Radeon.txt
+$INF_AMD_Legacy = Get-Content $DRIVE\DRIVERS\Radeon-Legacy\Hardware_Radeon.txt
 $GPU_AMD = pnputil /enum-devices /class Display
 $GPU_AMD = $GPU_AMD -like "*PCI\VEN_1002*"
 try {
@@ -105,7 +88,7 @@ if ($INF_AMD_Legacy -match $GPU_AMD) {
     Start-Process -Wait C:\AMD\Graphics\Setup.exe -ArgumentList "-install"
 }
 
-# Para NVIDIA se usa el archivo "DRIVERS\NVIDIA\ListDevices.txt" generado con NVCleanstall y utilizando el driver version 522.25
+# Para NVIDIA se usa el archivo ListDevices.txt extraído del paquete de controladores
 $INF_NVIDIA = Get-Content $DRIVE\DRIVERS\NVIDIA\ListDevices.txt
 $GPU_NVIDIA = pnputil /enum-devices /class Display
 $GPU_NVIDIA = $GPU_NVIDIA -like "*PCI\VEN_10DE*"
