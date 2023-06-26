@@ -81,6 +81,10 @@ try {
 if ($INF_AMD -match $GPU_AMD) {
     Write-Host "AMD Radeon encontrado. Instalando controlador..." $GPU_AMD
     Start-Process -Wait $DRIVE\DRIVERS\AMD\Radeon\setup.exe -ArgumentList "-install"
+    $WshShell = New-Object -comObject WScript.Shell
+    $Shortcut = $WshShell.CreateShortcut("$HOME\Desktop\AMD Software Adrenalin Edition.lnk")
+    $Shortcut.TargetPath = "C:\Program Files\AMD\CNext\CNext\RadeonSoftware.exe"
+    $Shortcut.Save()
 }
 if ($INF_AMD_Legacy -match $GPU_AMD) {
     Write-Host "AMD Radeon Legacy encontrado. Instalando controlador..." $GPU_AMD
