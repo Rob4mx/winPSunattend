@@ -42,7 +42,7 @@ if ($CHIPSET -eq 'AuthenticAMD'){
 # https://www.amd.com/es/support/kb/release-notes/rn-ryzen-chipset-3-10-08-506
     Write-Host 'Detectado Chipset AMD. Instalando controladores...'
     try {
-        Start-Process -Wait $DRIVE\DRIVERS\AMD\Chipset\setup.exe -ArgumentList "-install" -ErrorAction Stop
+        Start-Process -Wait $DRIVE\DRIVERS\AMD\Chipset\setup.exe -ArgumentList "/s /v/qn" -ErrorAction Stop
         Write-Host 'Instalacion completada.'
     } catch {
         Write-Host 'ERROR: Verificar archivos de instalacion en la carpeta DRIVERS\AMD\Chipset\setup.exe' -BackgroundColor 'Red'
@@ -70,8 +70,8 @@ for ($i=0; $i -le $GPU_Intel.Count-1; $i++) {
 
 # Para AMD se usa una lista generada con el script "generador_lista_hardware_radeon.ps1" utilizando el archivo INF del paquete de controladores de pantalla.
 # Debe generarse un archivo tanto para el paquete Estándar como para el paquete Legacy
-$INF_AMD = Get-Content $DRIVE\DRIVERS\Radeon\Hardware_Radeon.txt
-$INF_AMD_Legacy = Get-Content $DRIVE\DRIVERS\Radeon-Legacy\Hardware_Radeon.txt
+$INF_AMD = Get-Content $DRIVE\DRIVERS\AMD\Radeon\Hardware_Radeon.txt
+$INF_AMD_Legacy = Get-Content $DRIVE\DRIVERS\AMD\Radeon-Legacy\Hardware_Radeon.txt
 $GPU_AMD = pnputil /enum-devices /class Display
 $GPU_AMD = $GPU_AMD -like "*PCI\VEN_1002*"
 try {
@@ -164,6 +164,7 @@ try {
     $Crystal = $Crystal -match "Health Status :"
     $Crystal | Out-File $HOME\Desktop\Crystal.txt
     Remove-Item $HOME\Desktop\DiskInfo.txt
+    Remove-Item $DRIVE\HERRAMIENTAS\CrystalDiskInfo\Smart -Recurse
     Write-Host 'Creado archivo de reporte en el escritorio.'
 } catch {
     Write-Host 'ERROR: Verificar archivos de instalacion de CystalDiskInfo en la carpeta HERRAMIENTAS\CrystalDiskInfo' -BackgroundColor 'Red'
