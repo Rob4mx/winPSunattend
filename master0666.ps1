@@ -24,13 +24,6 @@ try {
 }
 Write-Host ''
 
-# ------------------------------------------------------------------------------------------------------ Cambio de nombre en Red
-Write-Host '---------- Cambiando de nombre en red... ----------'
-$RND = Get-Random -Maximum 9999
-Rename-Computer -NewName "User$RND-PC"
-Write-Host '    Listo'
-Write-Host ''
-
 # ------------------------------------------------------------------------------------------------------ MOBO chipset & otros
 Write-Host '---------- Tarjeta madre ----------'
 Write-Host $MOBO
@@ -40,7 +33,7 @@ if ($CHIPSET -eq 'GenuineIntel') {
     Write-Host '    Detectado Chipset Intel. Instalando controladores...'
     try {
         Start-Process -Wait $DRIVE\DRIVERS\Intel\Chipset\SetupChipset.exe -ArgumentList "-s -norestart" -ErrorAction Stop
-        pnputil /add-driver $DRIVE\DRIVERS\Intel\*.inf /subdirs /install
+        pnputil /add-driver $DRIVE\DRIVERS\Intel\Chipset\*.inf /subdirs /install
         Write-Host '    Instalacion completada.'
     } catch {
         Write-Host '    ERROR: Verificar archivos de instalacion en la carpeta DRIVERS\Intel\Chipset\SetupChipset.exe' -BackgroundColor 'Red'
@@ -52,7 +45,7 @@ if ($CHIPSET -eq 'AuthenticAMD'){
     Write-Host '    Detectado Chipset AMD. Instalando controladores...'
     try {
         Start-Process -Wait $DRIVE\DRIVERS\AMD\Chipset\amd_chipset_software_5.05.16.529.exe -ArgumentList "/s /v/qn" -ErrorAction Stop
-        pnputil /add-driver $DRIVE\DRIVERS\AMD\*.inf /subdirs /install
+        pnputil /add-driver $DRIVE\DRIVERS\AMD\Chipset\*.inf /subdirs /install
         Write-Host '    Instalacion completada.'
     } catch {
         Write-Host '    ERROR: Verificar archivos de instalacion en la carpeta DRIVERS\AMD\Chipset\amd_chipset_software_5.05.16.529.exe' -BackgroundColor 'Red'
@@ -102,10 +95,10 @@ $INF_NVIDIA = Get-Content $DRIVE\DRIVERS\NVIDIA\ListDevices.txt
 $GPU_NVIDIA = pnputil /enum-devices /class Display
 $GPU_NVIDIA = $GPU_NVIDIA -like "*PCI\VEN_10DE*"
 if ($GPU_NVIDIA) {
-    $GPU_NVIDIA = $GPU_NVIDIA.Substring(37,17)
+    $GPU_NVIDIA = $GPU_NVIDIA.Substring(46,8)
     if ($INF_NVIDIA -like "*$GPU_NVIDIA*") {
         Write-Host "    NVIDIA GeForce encontrado. Instalando controlador..." $GPU_NVIDIA
-        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\setup.exe -ArgumentList "/s /noreboot"
+        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\536.23-desktop-win10-win11-64bit-international-dch-whql.exe.exe -ArgumentList "/s /noreboot"
     }
 }
 Write-Host ''
@@ -189,6 +182,13 @@ try {
 } catch {
     Write-Host '    ERROR: Verificar archivos de instalacion de CystalDiskInfo en la carpeta HERRAMIENTAS\CrystalDiskInfo' -BackgroundColor 'Red'
 }
+Write-Host ''
+
+# ------------------------------------------------------------------------------------------------------ Cambio de nombre en Red
+Write-Host '---------- Cambiando de nombre en red... ----------'
+$RND = Get-Random -Maximum 9999
+Rename-Computer -NewName "User$RND-PC"
+Write-Host '    Listo'
 Write-Host ''
 
 Stop-Transcript
