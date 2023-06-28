@@ -31,6 +31,6 @@ try {
     $trim_end = $temp | Select-String -Pattern 'General installation section' | Select -ExpandProperty LineNumber
     $temp = $temp[($trim_start+2)..($trim_end-4)]
     Set-Content -Path .\Hardware_Radeon.txt -Value $temp
-    Write-Host 'Archivo creado en la misma carpeta que este script.'
+    Write-Host 'Archivo creado en la misma carpeta que este script. Muévalo a la carpeta "Radeon" o "Radeon-Legacy" según corresponda.'
     Start-Sleep -Seconds 5
 } catch { }
