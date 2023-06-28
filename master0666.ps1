@@ -105,7 +105,7 @@ if ($GPU_NVIDIA) {
     $GPU_NVIDIA = $GPU_NVIDIA.Substring(37,17)
     if ($INF_NVIDIA -like "*$GPU_NVIDIA*") {
         Write-Host "    NVIDIA GeForce encontrado. Instalando controlador..." $GPU_NVIDIA
-        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\setup.exe -ArgumentList "/s /noreboot"
+        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\536.23-desktop-win10-win11-64bit-international-dch-whql.exe -ArgumentList "/s /noreboot"
     }
 }
 Write-Host ''
