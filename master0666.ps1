@@ -191,5 +191,34 @@ Rename-Computer -NewName "User$RND-PC"
 Write-Host '    Listo'
 Write-Host ''
 
+# ------------------------------------------------------------------------------------------------------- Specs
+$CPU_Name = Get-WmiObject Win32_Processor | Select-Object -ExpandProperty Name
+$RAM_Capacity = (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).sum /1gb
+$RAM_Speed = (Get-WmiObject Win32_PhysicalMemory | Select-Object -ExpandProperty Speed)[0]
+$RAM_Type = (Get-WmiObject Win32_PhysicalMemory | Select-Object -ExpandProperty SMBIOSMemoryType)[0]
+$Disk0_type = (Get-PhysicalDisk | Select-Object -ExpandProperty MediaType)[0]
+$Disk0_size = (Get-PhysicalDisk | Select-Object -ExpandProperty Size)[0]/1000000000
+$Disk0_size = [math]::Round($Disk0_size)
+$Disk1_type = (Get-PhysicalDisk | Select-Object -ExpandProperty MediaType)[1]
+$Disk1_size = (Get-PhysicalDisk | Select-Object -ExpandProperty Size)[1]/1000000000
+$Disk1_size = [math]::Round($Disk1_size)
+$Motherboard = (wmic baseboard get manufacturer,product)[2]
+$Graphics_card = Get-WmiObject win32_VideoController | Select-Object -ExpandProperty Name
+
+if ($RAM_Type -eq 24) {
+    $RAM_Type = "DDR3"
+} elseif ($RAM_Type -eq 26) {
+    $RAM_Type = "DDR4"
+} elseif ($RAM_Type -eq 28) {
+    $RAM_Type = "DDR5"
+}
+
+echo $CPU_Name | Out-File -FilePath $HOME\Desktop\specs.txt
+echo $RAM_Capacity" GB "$RAM_Type" @ "$RAM_Speed" MHz" | Out-File -FilePath $HOME\Desktop\specs.txt -Append
+echo "$Disk0_type $Disk0_size GiB" | Out-File -FilePath $HOME\Desktop\specs.txt -Append
+echo "$Disk1_type $Disk1_size GiB" | Out-File -FilePath $HOME\Desktop\specs.txt -Append
+echo $Motherboard | Out-File -FilePath $HOME\Desktop\specs.txt -Append
+echo $Graphics_card | Out-File -FilePath $HOME\Desktop\specs.txt -Append
+# ------------------------------------------------------------------------------------------------------- END
 Stop-Transcript
 Restart-Computer
