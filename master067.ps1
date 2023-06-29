@@ -3,7 +3,7 @@ Start-Transcript -path $HOME\Desktop\reporte.txt -append
 Write-Host @"
     ---------------------------------------------------
     | Instalacion desatendida de drivers y programas. |
-    | Script v0.666 basado en PowerShell, de Rob.      |
+    | Script v0.67 basado en PowerShell, de Rob.      |
     ---------------------------------------------------
 "@
 
