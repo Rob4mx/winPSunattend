@@ -202,6 +202,9 @@ $Disk0_size = [math]::Round($Disk0_size)
 $Disk1_type = (Get-PhysicalDisk | Select-Object -ExpandProperty MediaType)[1]
 $Disk1_size = (Get-PhysicalDisk | Select-Object -ExpandProperty Size)[1]/1000000000
 $Disk1_size = [math]::Round($Disk1_size)
+$Disk2_type = (Get-PhysicalDisk | Select-Object -ExpandProperty MediaType)[2]
+$Disk2_size = (Get-PhysicalDisk | Select-Object -ExpandProperty Size)[2]/1000000000
+$Disk2_size = [math]::Round($Disk2_size)
 $Motherboard = (wmic baseboard get manufacturer,product)[2]
 $Graphics_card = Get-WmiObject win32_VideoController | Select-Object -ExpandProperty Name
 
@@ -217,6 +220,7 @@ echo $CPU_Name | Out-File -FilePath $HOME\Desktop\specs.txt
 echo $RAM_Capacity" GB "$RAM_Type" @ "$RAM_Speed" MHz" | Out-File -FilePath $HOME\Desktop\specs.txt -Append
 echo "$Disk0_type $Disk0_size GiB" | Out-File -FilePath $HOME\Desktop\specs.txt -Append
 echo "$Disk1_type $Disk1_size GiB" | Out-File -FilePath $HOME\Desktop\specs.txt -Append
+echo "$Disk2_type $Disk2_size GiB" | Out-File -FilePath $HOME\Desktop\specs.txt -Append
 echo $Motherboard | Out-File -FilePath $HOME\Desktop\specs.txt -Append
 echo $Graphics_card | Out-File -FilePath $HOME\Desktop\specs.txt -Append
 # ------------------------------------------------------------------------------------------------------- END
