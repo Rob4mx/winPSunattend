@@ -98,7 +98,7 @@ if ($GPU_NVIDIA) {
     $GPU_NVIDIA = $GPU_NVIDIA.Substring(46,8)
     if ($INF_NVIDIA -like "*$GPU_NVIDIA*") {
         Write-Host "    NVIDIA GeForce encontrado. Instalando controlador..." $GPU_NVIDIA
-        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\536.23-desktop-win10-win11-64bit-international-dch-whql.exe.exe -ArgumentList "/s /noreboot"
+        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\536.23-desktop-win10-win11-64bit-international-dch-whql.exe -ArgumentList "/s /noreboot"
     }
 }
 Write-Host ''
@@ -117,19 +117,6 @@ Write-Host ''
 Write-Host '---------- Instalando Office... ----------'
 try {
     Start-Process -Wait $DRIVE\OFFICE_2013\setup.exe -ErrorAction Stop
-    $WshShell = New-Object -comObject WScript.Shell
-    New-Item -Path "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Microsoft Office 2013" -ItemType Directory
-    $Shortcut = $WshShell.CreateShortcut("$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Microsoft Office 2013\Word 2013.lnk")
-    $Shortcut.TargetPath = "C:\Program Files (x86)\Microsoft Office\Office15\WINWORD.EXE"
-    $Shortcut.Save()
-
-    $Shortcut = $WshShell.CreateShortcut("$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Microsoft Office 2013\Excel 2013.lnk")
-    $Shortcut.TargetPath = "C:\Program Files (x86)\Microsoft Office\Office15\EXCEL.EXE"
-    $Shortcut.Save()
-
-    $Shortcut = $WshShell.CreateShortcut("$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Microsoft Office 2013\PowerPoint 2013.lnk")
-    $Shortcut.TargetPath = "C:\Program Files (x86)\Microsoft Office\Office15\POWERPNT.EXE"
-    $Shortcut.Save()
     Write-Host '    Listo'
 } catch {
     Write-Host '    ERROR: Verificar archivos de instalacion de Office en la carpeta OFFICE_2013' -BackgroundColor 'Red'
