@@ -90,7 +90,7 @@ if ($GPU_AMD) {
     }
 }
 
-# Para NVIDIA se usa el archivo ListDevices.txt extraído del paquete de controladores. Se puede descargar el más reciente en www.techpowerup.com
+# Para NVIDIA se usa el archivo ListDevices.txt extraído del paquete de controladores como si se tratara de un archivo comprimido. Se puede descargar el más reciente en www.techpowerup.com
 $INF_NVIDIA = Get-Content $DRIVE\DRIVERS\NVIDIA\ListDevices.txt
 $GPU_NVIDIA = pnputil /enum-devices /class Display
 $GPU_NVIDIA = $GPU_NVIDIA -like "*PCI\VEN_10DE*"
@@ -98,7 +98,7 @@ if ($GPU_NVIDIA) {
     $GPU_NVIDIA = $GPU_NVIDIA.Substring(46,8)
     if ($INF_NVIDIA -like "*$GPU_NVIDIA*") {
         Write-Host "    NVIDIA GeForce encontrado. Instalando controlador..." $GPU_NVIDIA
-        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\536.23-desktop-win10-win11-64bit-international-dch-whql.exe -ArgumentList "/s /noreboot"
+        Start-Process -Wait $DRIVE\DRIVERS\NVIDIA\setup.exe -ArgumentList "/s /noreboot"
     }
 }
 Write-Host ''
